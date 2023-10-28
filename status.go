@@ -90,7 +90,7 @@ func setRandomStatus(session *discordgo.Session) {
 			"with the wall API",
 		}
 		newStatus := statuses[rand.Intn(len(statuses))]
-		session.UpdateGameStatus(0, newStatus)
+		session.UpdateWatchStatus(0, "@jyaif play "+newStatus)
 		time.Sleep(30 * time.Minute)
 	}
 }
