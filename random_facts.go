@@ -6,7 +6,7 @@ func getRandomFact() string {
 	facts := [...]string{
 		"***Unused string replaced with a survive fact***",
 		"Kouglof is a cake and it is angry",
-		"There are 448 possible ship configuration combinations",
+		"There are 512 possible ship configuration combinations",
 		"BAF is short for Back And Forth",
 		"Eskiv comes from the verbe \"esquiver\" which means \"to dodge\" in French",
 		"You can have a negative score in Eskiv",
@@ -24,7 +24,6 @@ func getRandomFact() string {
 		"The idea of allowing multiple colors in names came from Quake 3",
 		"The name PewPew **Live** was inspired by Quake **Live**",
 		"At first, PewPew Live was going to be a browser-only game",
-		"The account discriminators are randomly chosen between 100 and 999",
 		"The amount of damage you take by an asteroid depends on its size",
 		"The development of Angry Kouglof was live streamed",
 		"In the level Hexagon you are in a hexagonal arena with a hexagon in the middle, hexagons are in the background and you are collecting hexagons to progress",
