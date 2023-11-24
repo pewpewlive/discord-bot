@@ -2,8 +2,10 @@ package main
 
 import (
 	"log"
+	"strings"
 
 	"github.com/bwmarrin/discordgo"
+	"github.com/icza/gog"
 )
 
 var (
@@ -15,8 +17,32 @@ var (
 		{
 			Name:        "fact",
 			Description: "Returns a random fact about the PewPew games",
+			Options: []*discordgo.ApplicationCommandOption{
+				{
+					Type:        discordgo.ApplicationCommandOptionInteger,
+					Name:        "index",
+					Description: "The index of the fact",
+					MinValue:    gog.Ptr(1.0),
+				},
+			},
+		},
+		{
+			Name:        "player-fact",
+			Description: "Returns a random fact about the PewPew playerbase",
+			Options: []*discordgo.ApplicationCommandOption{
+				{
+					Type:        discordgo.ApplicationCommandOptionInteger,
+					Name:        "index",
+					Description: "The index of the fact",
+					MinValue:    gog.Ptr(1.0),
+				},
+			},
 		},
 		// Level management commands
+		{
+			Type: discordgo.MessageApplicationCommand,
+			Name: "Approve Level",
+		},
 		{
 			Name:        "levels",
 			Description: "Commands concerning the management of levels",
@@ -60,6 +86,22 @@ var (
 			},
 		},
 		// Comment management commands
+		{
+			Type: discordgo.MessageApplicationCommand,
+			Name: "Hide Comment",
+		},
+		{
+			Type: discordgo.MessageApplicationCommand,
+			Name: "Unhide Comment",
+		},
+		{
+			Type: discordgo.MessageApplicationCommand,
+			Name: "Ban from Comments",
+		},
+		{
+			Type: discordgo.MessageApplicationCommand,
+			Name: "Unban from Comments",
+		},
 		{
 			Name:        "comments",
 			Description: "Commands concerning the management of comments",
@@ -144,14 +186,43 @@ var (
 			}
 		},
 		"fact": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
+			index := 0
+
+			if len(i.ApplicationCommandData().Options) != 0 {
+				index = int(i.ApplicationCommandData().Options[0].IntValue())
+			}
+
 			s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 				Type: discordgo.InteractionResponseChannelMessageWithSource,
 				Data: &discordgo.InteractionResponseData{
-					Content: getRandomFact(),
+					Content: getFact(index),
+				},
+			})
+		},
+		"player-fact": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
+			index := 0
+
+			if len(i.ApplicationCommandData().Options) != 0 {
+				index = int(i.ApplicationCommandData().Options[0].IntValue())
+			}
+
+			s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+				Type: discordgo.InteractionResponseChannelMessageWithSource,
+				Data: &discordgo.InteractionResponseData{
+					Content: getPlayerFact(index),
 				},
 			})
 		},
 		// Level management
+		"Approve Level": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
+			resolvedMessage := i.ApplicationCommandData().Resolved.Messages[i.ApplicationCommandData().TargetID]
+			if len(resolvedMessage.Embeds) == 0 || resolvedMessage.Embeds[0].Footer == nil {
+				respondsWithMessageOrAck(s, i, func() string { return "Invalid level review request message" })
+				return
+			}
+			levelUUID := resolvedMessage.Embeds[0].Footer.Text
+			respondsWithMessageOrAck(s, i, func() string { return handleLevelApproveCommand(s, i, levelUUID) })
+		},
 		"levels": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
 			subcommand := i.ApplicationCommandData().Options[0]
 
@@ -169,6 +240,42 @@ var (
 			}
 		},
 		// Comment management
+		"Hide Comment": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
+			resolvedMessage := i.ApplicationCommandData().Resolved.Messages[i.ApplicationCommandData().TargetID]
+			if len(resolvedMessage.Embeds) == 0 || resolvedMessage.Embeds[0].Footer == nil {
+				respondsWithMessageOrAck(s, i, func() string { return "Invalid comment report message" })
+				return
+			}
+			commentUUID := resolvedMessage.Embeds[0].Footer.Text
+			respondsWithMessageOrAck(s, i, func() string { return handleCommentSetHiddenStatus(s, i, commentUUID, true) })
+		},
+		"Unhide Comment": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
+			resolvedMessage := i.ApplicationCommandData().Resolved.Messages[i.ApplicationCommandData().TargetID]
+			if len(resolvedMessage.Embeds) == 0 || resolvedMessage.Embeds[0].Footer == nil {
+				respondsWithMessageOrAck(s, i, func() string { return "Invalid comment report message" })
+				return
+			}
+			commentUUID := resolvedMessage.Embeds[0].Footer.Text
+			respondsWithMessageOrAck(s, i, func() string { return handleCommentSetHiddenStatus(s, i, commentUUID, false) })
+		},
+		"Ban from Comments": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
+			resolvedMessage := i.ApplicationCommandData().Resolved.Messages[i.ApplicationCommandData().TargetID]
+			if len(resolvedMessage.Embeds) == 0 || resolvedMessage.Embeds[0].URL == "" {
+				respondsWithMessageOrAck(s, i, func() string { return "Invalid comment report message" })
+				return
+			}
+			accountUUID := strings.Split(resolvedMessage.Embeds[0].URL, "=")[1]
+			respondsWithMessageOrAck(s, i, func() string { return handleModerationActionOnAccount(s, i, accountUUID, "ban", *i.Member.User) })
+		},
+		"Unban from Comments": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
+			resolvedMessage := i.ApplicationCommandData().Resolved.Messages[i.ApplicationCommandData().TargetID]
+			if len(resolvedMessage.Embeds) == 0 || resolvedMessage.Embeds[0].URL == "" {
+				respondsWithMessageOrAck(s, i, func() string { return "Invalid comment report message" })
+				return
+			}
+			accountUUID := strings.Split(resolvedMessage.Embeds[0].URL, "=")[1]
+			respondsWithMessageOrAck(s, i, func() string { return handleModerationActionOnAccount(s, i, accountUUID, "unban", *i.Member.User) })
+		},
 		"comments": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
 			subcommand := i.ApplicationCommandData().Options[0]
 
@@ -199,20 +306,20 @@ func registerCommands(s *discordgo.Session) {
 		}
 	})
 
-	// Delete old commands
-	cmds, _ := s.ApplicationCommands(s.State.User.ID, GuildID)
-	log.Printf("Deleting old commands")
-	for _, v := range cmds {
-		s.ApplicationCommandDelete(s.State.User.ID, GuildID, v.ID)
+	if WipeOldCommands {
+		log.Printf("Deleting old commands\n")
+		cmd, _ := s.ApplicationCommands(s.State.User.ID, GuildID)
+		for _, v := range cmd {
+			s.ApplicationCommandDelete(s.State.User.ID, GuildID, v.ID)
+		}
 	}
 
-	// Create new ones
-	for _, v := range commands {
-		_, err := s.ApplicationCommandCreate(s.State.User.ID, GuildID, v)
-		if err != nil {
-			log.Panicf("Cannot create '%v' command(s): %v", v.Name, err)
-		} else {
-			log.Printf("Created new command(s) %v\n", v.Name)
-		}
+	createdCommands, err := s.ApplicationCommandBulkOverwrite(s.State.User.ID, GuildID, commands)
+	if err != nil {
+		log.Panicf("Could not create command(s): %v", err)
+	}
+
+	for _, v := range createdCommands {
+		log.Printf("Created new command(s) %v\n", v.Name)
 	}
 }

@@ -11,6 +11,7 @@ import (
 )
 
 var UseLocalServer bool
+var WipeOldCommands bool
 var BotRequestToken string
 var WaitForClose chan bool
 
@@ -48,6 +49,7 @@ func main() {
 	rand.Seed(time.Now().UnixNano())
 
 	flag.BoolVar(&UseLocalServer, "local", false, "if the bot should run in localhost mode or not")
+	flag.BoolVar(&WipeOldCommands, "reset", false, "if the bot should wipe existing commands, and make new ones")
 	flag.Parse()
 
 	WaitForClose = make(chan bool, 1)
