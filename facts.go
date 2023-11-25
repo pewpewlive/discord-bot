@@ -100,6 +100,7 @@ func getFact(index int) string {
 func getPlayerFact(index int) string {
 	facts := [...]string{
 		"Momos Necto was the first person to survive Fury with the bonus score, without shooting.",
+		"Noisia has a play count of over 10k and time played of more than 2 days in felp",
 		"Mutox has created the most custom enemies!",
 		"The 2022 PPL Level Jam winner is tavitu!",
 		"The first custom community-made level is Waves Pro by FLAVOUR",
