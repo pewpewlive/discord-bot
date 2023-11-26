@@ -100,12 +100,28 @@ func getFact(index int) string {
 func getPlayerFact(index int) string {
 	facts := [...]string{
 		"Momos Necto was the first person to survive Fury with the bonus score, without shooting.",
-		"Noisia has a play count of over 10k and time played of more than 2 days in felp",
 		"Mutox has created the most custom enemies!",
 		"The 2022 PPL Level Jam winner is tavitu!",
 		"The first custom community-made level is Waves Pro by FLAVOUR",
 		"*Someone* once pinged the entire server by uploading a score with the name `@ everyone`",
 		"Brandon was the first person to hold the number 1 spot for all 5 modes simultaneously",
+		"Noisia has over 10k of playcount in felp! And more than 2 days time played!",
+		"There used to be two best players on the leaderboard named MIDNIGHT in era 1. They were both different individual. This made many players confused.",
+		"Voro (the player who was no.1 in Eskiv in era0) and Non filterer (a hacker) was Kajxqeirscl",
+		"On the era 1 leaderboard, Noisia is ranked #1. He spent eight months in maintaining that position. before that, Momos Necto had it for six months, and even before that MIDNIGHT kept it for three months.",
+		"~~SKPG doesn't have fury gold medal~~",
+		"Funkster is an expert PewPew Live player, and one of the oldest(above 50) player.",
+		"Prexion, the professional player ranked second in era 1, is colorblind.",
+		"Modengineer has typing speed of 189wpm!",
+		"Doodledude wrote a command to ban @JF but instead a member name Jeffka got banned",
+		"Derp doesn't need sleep",
+		"There's a popular drug in PewPew Live, it is called inertic, it is sold and manufacture by SKPG, Mutox and Tasty Kiwi",
+		"Mnhs most used emoji is :sunglasses:",
+		"Nikitos plays PewPew Live with his index fingers instead of thumbs",
+		"Winternox has the most (mental age)/age ratio in the server",
+		"The player who was most talked about and isn't in the server is N×××× slayer",
+		"Dogewave's most used word is bread and Noisia's most used word is Deviled eggs",
+		"~~JF is addicted to inertic~~",
 	}
 
 	if index == 0 {
