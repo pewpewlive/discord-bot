@@ -100,12 +100,19 @@ func getFact(index int) string {
 func getPlayerFact(index int) string {
 	facts := [...]string{
 		"Momos Necto was the first person to survive Fury with the bonus score, without shooting.",
-		"Noisia has a play count of over 10k and time played of more than 2 days in felp",
 		"Mutox has created the most custom enemies!",
 		"The 2022 PPL Level Jam winner is tavitu!",
 		"The first custom community-made level is Waves Pro by FLAVOUR",
 		"*Someone* once pinged the entire server by uploading a score with the name `@ everyone`",
 		"Brandon was the first person to hold the number 1 spot for all 5 modes simultaneously",
+		"Noisia has a play count of over 10k and time played of more than 2 days in felp",
+		"In Era 1, there used to be two best players in the leaderboards named MIDNIGHT. They were both different individuals and this made many other players confused.",
+		"In Era 1, Noisia was ranked #1 and he had spent eight months maintaining that position. But before that, Momos Necto had been doing that for six months, and even before that, MIDNIGHT had held it for three months.",
+		"Prexion, the professional player ranked #2 in Era 1, is colorblind.",
+		"Derp doesn't need sleep",
+		"Nikitos plays PewPew Live with his index fingers instead of thumbs",
+		"The most talked about player that isn't in the server is N×××× slayer",
+		"Dogewave's most used word is bread and Noisia's most used word is Deviled eggs",
 	}
 
 	if index == 0 {
