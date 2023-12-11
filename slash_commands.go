@@ -5,7 +5,6 @@ import (
 	"strings"
 
 	"github.com/bwmarrin/discordgo"
-	"github.com/icza/gog"
 )
 
 var (
@@ -22,7 +21,6 @@ var (
 					Type:        discordgo.ApplicationCommandOptionInteger,
 					Name:        "index",
 					Description: "The index of the fact",
-					MinValue:    gog.Ptr(1.0),
 				},
 			},
 		},
@@ -34,7 +32,6 @@ var (
 					Type:        discordgo.ApplicationCommandOptionInteger,
 					Name:        "index",
 					Description: "The index of the fact",
-					MinValue:    gog.Ptr(1.0),
 				},
 			},
 		},
