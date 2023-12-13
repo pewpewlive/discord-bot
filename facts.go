@@ -113,6 +113,7 @@ func getPlayerFact(index int) string {
 		"Nikitos plays PewPew Live with his index fingers instead of thumbs",
 		"The most talked about player that isn't in the server is N×××× slayer",
 		"Dogewave's most used word is bread and Noisia's most used word is Deviled eggs",
+		"Doodledude once jokingly tried to ban JF by writting `jeff` and in the process banned a member named Jeffka.",
 	}
 
 	if index == 0 {
