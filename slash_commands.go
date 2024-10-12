@@ -2,7 +2,6 @@ package main
 
 import (
 	"log"
-	"strings"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -93,11 +92,7 @@ var (
 		},
 		{
 			Type: discordgo.MessageApplicationCommand,
-			Name: "Ban from Comments",
-		},
-		{
-			Type: discordgo.MessageApplicationCommand,
-			Name: "Unban from Comments",
+			Name: "Censor Comment",
 		},
 		{
 			Name:        "comments",
@@ -125,6 +120,19 @@ var (
 					Type:        discordgo.ApplicationCommandOptionSubCommand,
 					Name:        "unhide",
 					Description: "Unhides a comment from the given ID",
+					Options: []*discordgo.ApplicationCommandOption{
+						{
+							Type:        discordgo.ApplicationCommandOptionString,
+							Name:        "comment-id",
+							Description: "The ID of the comment",
+							Required:    true,
+						},
+					},
+				},
+				{
+					Type:        discordgo.ApplicationCommandOptionSubCommand,
+					Name:        "censor",
+					Description: "Censors a comment from the given ID",
 					Options: []*discordgo.ApplicationCommandOption{
 						{
 							Type:        discordgo.ApplicationCommandOptionString,
@@ -255,23 +263,14 @@ var (
 			commentUUID := resolvedMessage.Embeds[0].Footer.Text
 			respondsWithMessageOrAck(s, i, func() string { return handleCommentSetHiddenStatus(s, i, commentUUID, false) })
 		},
-		"Ban from Comments": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
+		"Censor Comment": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
 			resolvedMessage := i.ApplicationCommandData().Resolved.Messages[i.ApplicationCommandData().TargetID]
-			if len(resolvedMessage.Embeds) == 0 || resolvedMessage.Embeds[0].URL == "" {
+			if len(resolvedMessage.Embeds) == 0 || resolvedMessage.Embeds[0].Footer == nil {
 				respondsWithMessageOrAck(s, i, func() string { return "Invalid comment report message" })
 				return
 			}
-			accountUUID := strings.Split(resolvedMessage.Embeds[0].URL, "=")[1]
-			respondsWithMessageOrAck(s, i, func() string { return handleModerationActionOnAccount(s, i, accountUUID, "ban", *i.Member.User) })
-		},
-		"Unban from Comments": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
-			resolvedMessage := i.ApplicationCommandData().Resolved.Messages[i.ApplicationCommandData().TargetID]
-			if len(resolvedMessage.Embeds) == 0 || resolvedMessage.Embeds[0].URL == "" {
-				respondsWithMessageOrAck(s, i, func() string { return "Invalid comment report message" })
-				return
-			}
-			accountUUID := strings.Split(resolvedMessage.Embeds[0].URL, "=")[1]
-			respondsWithMessageOrAck(s, i, func() string { return handleModerationActionOnAccount(s, i, accountUUID, "unban", *i.Member.User) })
+			commentUUID := resolvedMessage.Embeds[0].Footer.Text
+			respondsWithMessageOrAck(s, i, func() string { return handleCensorComment(s, i, commentUUID) })
 		},
 		"comments": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
 			subcommand := i.ApplicationCommandData().Options[0]
@@ -285,6 +284,9 @@ var (
 			case "unhide":
 				commentUUID := subcommand.Options[0].StringValue()
 				respondsWithMessageOrAck(s, i, func() string { return handleCommentSetHiddenStatus(s, i, commentUUID, false) })
+			case "censor":
+				commentUUID := subcommand.Options[0].StringValue()
+				respondsWithMessageOrAck(s, i, func() string { return handleCensorComment(s, i, commentUUID) })
 			case "ban":
 				accountUUID := subcommand.Options[0].StringValue()
 				respondsWithMessageOrAck(s, i, func() string { return handleModerationActionOnAccount(s, i, accountUUID, "ban", *i.Member.User) })

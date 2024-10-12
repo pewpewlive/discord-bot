@@ -20,6 +20,14 @@ func handleCommentSetHiddenStatus(session *discordgo.Session, i *discordgo.Inter
 	return getResultOfHTTPQuery("api/hide-comment", url.Values{"UUID": {UUID}, "action": {action}})
 }
 
+func handleCensorComment(session *discordgo.Session, i *discordgo.InteractionCreate, UUID string) string {
+	if !(interactionHasRole(i, CommentManagerRoleID)) {
+		return ErrorMessageNeedRole
+	}
+
+	return getResultOfHTTPQuery("api/censor-comment", url.Values{"UUID": {UUID}})
+}
+
 func handleCommentListPending(session *discordgo.Session, i *discordgo.InteractionCreate) string {
 	if !(interactionHasRole(i, CommentManagerRoleID)) {
 		return ErrorMessageNeedRole
