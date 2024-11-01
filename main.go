@@ -3,9 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
-	"math/rand"
 	"os"
-	"time"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -46,8 +44,6 @@ func runAndHandle(token string) {
 }
 
 func main() {
-	rand.Seed(time.Now().UnixNano())
-
 	flag.BoolVar(&UseLocalServer, "local", false, "if the bot should run in localhost mode or not")
 	flag.BoolVar(&WipeOldCommands, "reset", false, "if the bot should wipe existing commands, and make new ones")
 	flag.Parse()
