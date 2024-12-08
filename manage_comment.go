@@ -6,18 +6,12 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-func handleCommentSetHiddenStatus(session *discordgo.Session, i *discordgo.InteractionCreate, UUID string, hide bool) string {
+func handleCommentSetHiddenStatus(session *discordgo.Session, i *discordgo.InteractionCreate, UUID string) string {
 	if !(interactionHasRole(i, CommentManagerRoleID)) {
 		return ErrorMessageNeedRole
 	}
-	var action string
-	if hide {
-		action = "hide"
-	} else {
-		action = "unhide"
-	}
 
-	return getResultOfHTTPQuery("api/hide-comment", url.Values{"UUID": {UUID}, "action": {action}})
+	return getResultOfHTTPQuery("api/hide-comment", url.Values{"UUID": {UUID}})
 }
 
 func handleCensorComment(session *discordgo.Session, i *discordgo.InteractionCreate, UUID string) string {

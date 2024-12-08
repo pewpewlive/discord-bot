@@ -84,11 +84,7 @@ var (
 		// Comment management commands
 		{
 			Type: discordgo.MessageApplicationCommand,
-			Name: "Hide Comment",
-		},
-		{
-			Type: discordgo.MessageApplicationCommand,
-			Name: "Unhide Comment",
+			Name: "Delete Comment",
 		},
 		{
 			Type: discordgo.MessageApplicationCommand,
@@ -105,21 +101,8 @@ var (
 				},
 				{
 					Type:        discordgo.ApplicationCommandOptionSubCommand,
-					Name:        "hide",
-					Description: "Hides a comment from the given ID",
-					Options: []*discordgo.ApplicationCommandOption{
-						{
-							Type:        discordgo.ApplicationCommandOptionString,
-							Name:        "comment-id",
-							Description: "The ID of the comment",
-							Required:    true,
-						},
-					},
-				},
-				{
-					Type:        discordgo.ApplicationCommandOptionSubCommand,
-					Name:        "unhide",
-					Description: "Unhides a comment from the given ID",
+					Name:        "delete",
+					Description: "Deletes a comment from the given ID",
 					Options: []*discordgo.ApplicationCommandOption{
 						{
 							Type:        discordgo.ApplicationCommandOptionString,
@@ -245,23 +228,14 @@ var (
 			}
 		},
 		// Comment management
-		"Hide Comment": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
+		"Delete Comment": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
 			resolvedMessage := i.ApplicationCommandData().Resolved.Messages[i.ApplicationCommandData().TargetID]
 			if len(resolvedMessage.Embeds) == 0 || resolvedMessage.Embeds[0].Footer == nil {
 				respondsWithMessageOrAck(s, i, func() string { return "Invalid comment report message" })
 				return
 			}
 			commentUUID := resolvedMessage.Embeds[0].Footer.Text
-			respondsWithMessageOrAck(s, i, func() string { return handleCommentSetHiddenStatus(s, i, commentUUID, true) })
-		},
-		"Unhide Comment": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
-			resolvedMessage := i.ApplicationCommandData().Resolved.Messages[i.ApplicationCommandData().TargetID]
-			if len(resolvedMessage.Embeds) == 0 || resolvedMessage.Embeds[0].Footer == nil {
-				respondsWithMessageOrAck(s, i, func() string { return "Invalid comment report message" })
-				return
-			}
-			commentUUID := resolvedMessage.Embeds[0].Footer.Text
-			respondsWithMessageOrAck(s, i, func() string { return handleCommentSetHiddenStatus(s, i, commentUUID, false) })
+			respondsWithMessageOrAck(s, i, func() string { return handleCommentSetHiddenStatus(s, i, commentUUID) })
 		},
 		"Censor Comment": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
 			resolvedMessage := i.ApplicationCommandData().Resolved.Messages[i.ApplicationCommandData().TargetID]
@@ -278,12 +252,9 @@ var (
 			switch subcommand.Name {
 			case "pending":
 				respondsWithMessageOrAck(s, i, func() string { return handleCommentListPending(s, i) })
-			case "hide":
+			case "delete":
 				commentUUID := subcommand.Options[0].StringValue()
-				respondsWithMessageOrAck(s, i, func() string { return handleCommentSetHiddenStatus(s, i, commentUUID, true) })
-			case "unhide":
-				commentUUID := subcommand.Options[0].StringValue()
-				respondsWithMessageOrAck(s, i, func() string { return handleCommentSetHiddenStatus(s, i, commentUUID, false) })
+				respondsWithMessageOrAck(s, i, func() string { return handleCommentSetHiddenStatus(s, i, commentUUID) })
 			case "censor":
 				commentUUID := subcommand.Options[0].StringValue()
 				respondsWithMessageOrAck(s, i, func() string { return handleCensorComment(s, i, commentUUID) })
