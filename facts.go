@@ -114,6 +114,9 @@ func getPlayerFact(index int) string {
 		"The most talked about player that isn't in the server is N×××× slayer",
 		"Dogewave's most used word is bread and Noisia's most used word is Deviled eggs",
 		"Doodledude once jokingly tried to ban JF by writting `jeff` and in the process banned a member named Jeffka.",
+		"Flasher has make ove 14 alt accounts",
+		"Now, in 2024 the most talked about player that isn't in discord server is thomed77, because he can get almost 100 WRs in the middle and last year",
+		"When Thomed77 get some WRs with his teammate named climr77. kajqeirscl make an alt named climr78 and get 20k in eskiv with that alt"' 
 	}
 
 	if index == 0 {
