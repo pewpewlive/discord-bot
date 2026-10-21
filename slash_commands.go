@@ -9,10 +9,6 @@ import (
 var (
 	commands = []*discordgo.ApplicationCommand{
 		{
-			Name:        "update",
-			Description: "Check for updates",
-		},
-		{
 			Name:        "fact",
 			Description: "Returns a random fact about the PewPew games",
 			Options: []*discordgo.ApplicationCommandOption{
@@ -156,23 +152,6 @@ var (
 	}
 
 	commandHandlers = map[string]func(s *discordgo.Session, i *discordgo.InteractionCreate){
-		"update": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
-			s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-				Type: discordgo.InteractionResponseDeferredChannelMessageWithSource,
-				Data: &discordgo.InteractionResponseData{
-					Flags: discordgo.MessageFlagsLoading | discordgo.MessageFlagsEphemeral,
-				},
-			})
-
-			output, shouldRestart := pullUpdates(s, i)
-			s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{
-				Content: &output,
-			})
-
-			if shouldRestart {
-				WaitForClose <- true
-			}
-		},
 		"fact": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
 			index := 0
 
